@@ -33,4 +33,10 @@ flutter:
   uses-material-design: true
   assets:
     # Add assets from the images directory to the application.
-    - assets/images/
+    - assets/icons/app_icon_foreground.png
+  fonts:
+    - family: Tradegothic
+      fonts:
+        - asset: assets/fonts/tradegothic/Trade_Gothic_LT.ttf
+        - asset: assets/fonts/tradegothic/Trade_Gothic_LT_Bold.ttf
+          style: italic
