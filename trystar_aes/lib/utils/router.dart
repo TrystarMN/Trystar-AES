@@ -16,7 +16,7 @@ class AppRouter {
       case '/login':
         return MaterialPageRoute(builder: (_) => LoginScreen());
       case '/home':
-        return MaterialPageRoute(builder: (_) => HomeScreen());
+        return MaterialPageRoute(builder: (_) => LoginScreen());
       default:
         return MaterialPageRoute(builder: (_) => LoginScreen());
     }

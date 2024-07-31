@@ -33,7 +33,10 @@ class TrystarAES extends StatelessWidget {
               primarySwatch: Colors.blue,
             ),
             
-            home: authProvider.isAuthenticated ? HomeScreen() : LoginScreen(),
+            home: LoginScreen(),
+
+            // home: authProvider.isAuthenticated ? HomeScreen() : LoginScreen(),
+
             onGenerateRoute: AppRouter.generateRoute,
           );
         },
