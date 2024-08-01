@@ -7,12 +7,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 
 /// Provides the authentication service that is used to validate the users account.
-class AuthService {
+class EpicorAuthService {
   static const String baseUrl = '';
 
   /// Log into the service. This authenticates the user against a service, then stores if the user is logged in
   /// in a local setting so it can persist between sessions.
-  Future<bool> login(String username, String password) async {
+  Future<bool> login(String username, String password, String epicorURL) async {
     // final response = await http.post(
     //   Uri.parse('$baseUrl/login'),
     //   headers: <String, String>{

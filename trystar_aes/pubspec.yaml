@@ -17,6 +17,7 @@ dependencies:
   flutter_launcher_icons: ^0.13.1
   http: ^0.13.3
   shared_preferences: ^2.0.6
+  toastification: ^2.1.0
 
 # App icon
 flutter_launcher_icons:

@@ -5,7 +5,7 @@ import 'package:trystar_aes/services/auth_services.dart';
 
 /// Provides the class to manage logging in and out of the app. This is an abstract class and not the auth provider itself.
 class AuthProvider with ChangeNotifier {
-  final AuthService _authService = AuthService();
+  final EpicorAuthService _authService = EpicorAuthService();
   bool _isAuthenticated = false;
 
   bool get isAuthenticated => _isAuthenticated;
@@ -19,8 +19,8 @@ class AuthProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<bool> login(String username, String password) async {
-    _isAuthenticated = await _authService.login(username, password);
+  Future<bool> login(String username, String password, String epicorURL) async {
+    _isAuthenticated = await _authService.login(username, password, epicorURL);
     notifyListeners();
     return _isAuthenticated;
   }

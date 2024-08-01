@@ -19,7 +19,7 @@ class TrystarAES extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
+    // Building this out with a MultiProvider framework in case in the future you need to add additional providers to the app.
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
@@ -30,10 +30,11 @@ class TrystarAES extends StatelessWidget {
           return MaterialApp(
             title: AppSettings.appName,
             theme: ThemeData(
-              primarySwatch: Colors.blue,
+              textSelectionTheme: const TextSelectionThemeData(
+                selectionHandleColor: AppSettings.textGrey,
+              ),
             ),
-            
-            home: LoginScreen(),
+            home: const LoginScreen(),
 
             // home: authProvider.isAuthenticated ? HomeScreen() : LoginScreen(),
 
