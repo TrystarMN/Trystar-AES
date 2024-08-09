@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trystar_aes/appSettings.dart';
+import 'package:trystar_aes/settings/appSettings.dart';
 import 'package:trystar_aes/dataModels/epicorLocations.dart';
 import 'package:trystar_aes/providers/auth_provider.dart';
 import 'package:trystar_aes/providers/epicor_integration_provider.dart';
@@ -24,6 +24,11 @@ class _LoginScreen extends State<LoginScreen> {
   String? selectedEpicorSiteID;
   /// Houses the list of sites for the Environment that the user selectes
   List<EpicorSite> epicorSites = [];
+  /// Houses the key of the Epicor Location that was selected. This is used a reference back to the app settings data for the Environment
+  String epicorLocationKey = "";
+
+  //TODO: Error notification process needs to be built out to replace this
+  String loginErrors = "";
 
   final _inputFormKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
@@ -100,7 +105,7 @@ class _LoginScreen extends State<LoginScreen> {
                               style: const TextStyle( // Adding this empty option disables the default Bold selection style
                               ),
                               value: selectedEpicorEnvironmentKey,
-                              items: AppSettings.epicorLocations.map((EpicorLocations location) {
+                              items: AppSettings.epicorLocations.map((EpicorLocation location) {
                                 return DropdownMenuItem<String>(
                                   value: location.key,
                                   alignment: Alignment.center,
@@ -118,6 +123,7 @@ class _LoginScreen extends State<LoginScreen> {
                                   return "Environment Required";
                                 }
                                 else {
+                                  epicorLocationKey = value;
                                   return null;
                                 }
                               },
@@ -216,6 +222,7 @@ class _LoginScreen extends State<LoginScreen> {
                                 color: AppSettings.textGrey,
                                 fontSize: 24
                               ),
+                              textAlign: TextAlign.center,
                               cursorColor: AppSettings.textGrey,
                               decoration: const InputDecoration(
                                 focusedBorder: UnderlineInputBorder(
@@ -254,14 +261,17 @@ class _LoginScreen extends State<LoginScreen> {
                           ),
 
                           // Password
+                          // TODO Highlighted field underlines are still purple
                           SizedBox(
                             width: 250,
                             child: TextFormField(
+                              obscureText: true,
                               controller: _passwordController,
                               style: const TextStyle(
                                 color: AppSettings.textGrey,
-                                fontSize: 24
+                                fontSize: 24,
                               ),
+                              textAlign: TextAlign.center,
                               cursorColor: AppSettings.textGrey,
                               decoration: const InputDecoration(
                                 focusedBorder: UnderlineInputBorder(
@@ -282,6 +292,16 @@ class _LoginScreen extends State<LoginScreen> {
                       ),
                     ),
 
+                    //TODO: Posibly replace this once notification process is built
+                    loginErrors != "" ? 
+                    Text(loginErrors,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontSize: 20
+                      ),
+                    )
+                    : const SizedBox(),
+
                     // Log in Button
                     Padding(
                       padding: const EdgeInsets.only(top: 20),
@@ -296,20 +316,32 @@ class _LoginScreen extends State<LoginScreen> {
                             }
                           )
                         ),
-                        onPressed: (){
+                        onPressed: () async {
                           // Validate input fields and log in
                           if(_inputFormKey.currentState!.validate()) {
+
+                            // Get the full Epicor location object that we're signing into
+                            EpicorLocation epicorLocation =  AppSettings.epicorLocations.where((x) => x.key == epicorLocationKey).first;
+
                             // Set the server settings
-                            Provider.of<EpicorIntegrationProvider>(context, listen: false).setEpicorURL(selectedEpicorEnvironmentKey!);
+                            Provider.of<EpicorIntegrationProvider>(context, listen: false).setEpicorLocation(epicorLocation!);
                             Provider.of<EpicorIntegrationProvider>(context, listen: false).setEpicorSite(selectedEpicorSiteID!);
 
                             // Try logging in
-                            Provider.of<AuthProvider>(context, listen: false).login(
+                            Map<bool,String> loginResponse = await Provider.of<AuthProvider>(context, listen: false).login(
                               _usernameController.text, 
                               _passwordController.text, 
-                              Provider.of<EpicorIntegrationProvider>(context, listen: false).epicorURL
-                              );
+                              epicorLocation
+                            );
+                            
                             // TODO Need a notifier if login failed
+                            if(!loginResponse.keys.first) {
+                              setState(() {
+                                loginErrors = loginResponse.values.first;
+                              });
+                            }
+
+   
                           }
                         }, 
                         child: const Text("Login",

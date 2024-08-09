@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:trystar_aes/appSettings.dart';
+import 'package:trystar_aes/settings/appSettings.dart';
 import 'package:trystar_aes/providers/auth_provider.dart';
+import 'package:trystar_aes/providers/epicor_integration_provider.dart';
 import 'package:trystar_aes/screens/login_screen.dart';
 import 'package:trystar_aes/screens/home_screen.dart';
+import 'package:trystar_aes/services/auth_services.dart';
 import 'package:trystar_aes/utils/router.dart';
 
 
@@ -23,6 +25,7 @@ class TrystarAES extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => EpicorIntegrationProvider()),
       ],
       child: Consumer<AuthProvider>(
         builder: (context, authProvider, child) {

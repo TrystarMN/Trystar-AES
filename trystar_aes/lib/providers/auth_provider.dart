@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:trystar_aes/dataModels/epicorLocations.dart';
 import 'package:trystar_aes/services/auth_services.dart';
 
 
 
 /// Provides the class to manage logging in and out of the app. This is an abstract class and not the auth provider itself.
 class AuthProvider with ChangeNotifier {
-  final EpicorAuthService _authService = EpicorAuthService();
+
   bool _isAuthenticated = false;
 
   bool get isAuthenticated => _isAuthenticated;
@@ -15,19 +16,24 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> checkLoginStatus() async {
-    _isAuthenticated = await _authService.isLoggedIn();
+    _isAuthenticated = await EpicorAuthService.isLoggedIn();
     notifyListeners();
   }
 
-  Future<bool> login(String username, String password, String epicorURL) async {
-    _isAuthenticated = await _authService.login(username, password, epicorURL);
+  Future<Map<bool, String>> login(String username, String password, EpicorLocation epicorLocation) async {
+    
+    Map<bool,String> loginResults = await EpicorAuthService.login(username, password, epicorLocation);
+    _isAuthenticated = loginResults.keys.first;
+
     notifyListeners();
-    return _isAuthenticated;
+    return loginResults;
   }
 
   Future<void> logout() async {
-    await _authService.logout();
+
+    await EpicorAuthService.logout();
     _isAuthenticated = false;
+
     notifyListeners();
   }
 }
